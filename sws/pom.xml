@@ -104,7 +104,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version> 4.13.1</version>
 		</dependency>
 		<!-- mockito -->
 		<dependency>
@@ -162,6 +161,20 @@
 <!--			<groupId>org.springframework.boot</groupId>-->
 <!--			<artifactId>spring-boot-starter-security</artifactId>-->
 <!--		</dependency>-->
+		<!-- RocketMq -->
+		<dependency>
+			<groupId>org.apache.rocketmq</groupId>
+			<artifactId>rocketmq-client</artifactId>
+			<version>5.0.0-ALPHA</version>
+		</dependency>
+
+		<dependency>
+			      <groupId>org.springframework.boot</groupId>
+			     <artifactId>spring-boot-configuration-processor</artifactId>
+			     <optional>true</optional>
+		</dependency>
+
+
 	</dependencies>
 	<properties>
 		<java.version>1.8</java.version>
