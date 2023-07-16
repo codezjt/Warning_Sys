@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -40,6 +41,8 @@ public class EventService {
     @Autowired
     @Qualifier("restTemplateMsg")
     private RestTemplate restTemplate;
+    @Autowired
+    private CaclService caclService;
 
 
     public List<Event> list() {
@@ -195,6 +198,13 @@ public class EventService {
 //        String daytime = format.format(calendar.getTime());
         System.out.println(daytime + "时间");
         return eventDAO.getWeekCaculate(daytime);
+    }
+
+    @Transactional
+    public void updateCacl(Event e){
+        addOrUpdate(e);
+        System.out.println("执行事务中途----------------");
+        caclService.updateCaclData(e.getCategory().getName());
     }
 
     public List<Map<String, Integer>> getEquipmentData() {

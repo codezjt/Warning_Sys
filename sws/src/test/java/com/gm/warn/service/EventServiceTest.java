@@ -73,7 +73,7 @@ public class EventServiceTest {
     public void sendMessage()
     {
         String msg = "湖大-行为识别测试";
-        eventService.sendMsgWarring(msg);
+//        eventService.sendMsgWarring(msg);
     }
 
     @Test

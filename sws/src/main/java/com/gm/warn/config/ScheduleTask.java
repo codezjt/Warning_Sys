@@ -68,7 +68,7 @@ public class ScheduleTask {
                                 String WarringMsg = "[山河智能] -人员安全报警\n" + "尊敬的用户:您好，根据数据监控显示，桩工车间" + eventwarring.getRoad() + "有人员" + eventwarring.getCategory().getName() +
                                         "进入车间，为了安全保障，请管理人员尽快去车间现场核实情况。点击链接查看详情: http://58.20.21.223:9401" + eventwarring.getCover();
                                 System.out.println(WarringMsg);
-                                eventService.sendMsgWarring(WarringMsg);   //微信报警调用
+//                                eventService.sendMsgWarring(WarringMsg);   //微信报警调用
                                 WebSocketServer.sendInfo(road + "检测到" + category, "222");     //发送警告信息
                             } else {
                                 eventService.updateIsWarning("0", eventid);
