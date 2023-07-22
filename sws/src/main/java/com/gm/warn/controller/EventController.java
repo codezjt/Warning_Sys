@@ -8,6 +8,8 @@ import com.gm.warn.result.ResultFactory;
 import com.gm.warn.service.EventService;
 import com.gm.warn.util.StringClass;
 
+import log.Action;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ import java.util.*;
  *       /api/admin/···  会进行登录权限判定拦截
  */
 
-
+@Slf4j
 @RestController
 public class EventController {
     @Autowired

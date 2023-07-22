@@ -1,9 +1,16 @@
 package com.gm.warn.service;
 
+import com.gm.warn.SWSApplication;
+
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.test.context.junit4.SpringRunner;
+//import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.SimpleDateFormat;
@@ -12,8 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 
-//@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Slf4j
 public class EventServiceTest {
 
     @Autowired
@@ -56,6 +64,7 @@ public class EventServiceTest {
 
     @Test
     public void getdata1(){
+        log.info("错误");
         System.out.println(eventService.getLocationData());
     }
 

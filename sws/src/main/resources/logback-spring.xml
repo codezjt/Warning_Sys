@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration  scan="true" scanPeriod="10 seconds">
-
+<configuration scan="true" scanPeriod="10 seconds">
     <contextName>logback</contextName>
-    <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
-    <property name = "Log-Pattern" value = "%date{yyyy-mm-dd hh:mm:ss} [%Thread] %-5level %Logger{36} - %msg%n" />
-    <!-- 定义日志存储的路径，绝对路径 -->
-    <property name="File_Path_Sys" value="D:\APPINSTIL\idea\workspace\SGZN_Warning_Sys\sws\src\main\java\log" />
-    <property name="File_Path_Warn" value="D:\APPINSTIL\idea\workspace\SGZN_Warning_Sys\sws\src\main\java\warnlog" />
+
+    <!-- Log pattern -->
+    <property name="Log-Pattern" value="%date{yyyy-MM-dd hh:mm:ss} [%thread] %-5level %logger{36} - %msg%n" />
+
+    <!-- Define log file paths -->
+    <property name="File_Path_Sys" value="D:\\APPINSTIL\\idea\\workspace\\SGZN_Warning_Sys\\sws\\src\\main\\java\\log\\log.%d{yyyy-MM-dd}.%i.log" />
+    <property name="File_Path_Warn" value="D:\\APPINSTIL\\idea\\workspace\\SGZN_Warning_Sys\\sws\\src\\main\\java\\warnlog\\log.%d{yyyy-MM-dd}.%i.log" />
 
     <!-- 控制台输出日志 -->
-    <appender name="console" class = "ch.qos.logback.core.ConsoleAppender">
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>INFO</level>
         </filter>
@@ -17,13 +17,12 @@
             <pattern>${Log-Pattern}</pattern>
         </encoder>
     </appender>
-    <!--每天生成一个日志文件，保存30天的日志文件。rollingFile用来切分文件 -->
+
+    <!-- 每天生成一个日志文件，保存30天的日志文件。rollingFile用来切分文件 -->
     <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern> ${File_Path_Sys} </fileNamePattern>
-
+            <fileNamePattern>${File_Path_Sys}</fileNamePattern>
             <maxHistory>30</maxHistory>
-
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- 日志文件的最大大小 -->
                 <maxFileSize>2MB</maxFileSize>
@@ -31,17 +30,16 @@
             <!-- 超出删除老文件 -->
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
-
-        <encoder>${Log-Pattern}</encoder>
+        <encoder>
+            <pattern>${Log-Pattern}</pattern>
+        </encoder>
     </appender>
 
-    <!--每天生成一个日志文件，保存30天的日志文件。rollingFile用来切分文件 -->
+    <!-- 每天生成一个日志文件，保存30天的日志文件。rollingFile用来切分文件 -->
     <appender name="rollingFile_warn" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern> ${File_Path_Warn} </fileNamePattern>
-
+            <fileNamePattern>${File_Path_Warn}</fileNamePattern>
             <maxHistory>30</maxHistory>
-
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- 日志文件的最大大小 -->
                 <maxFileSize>2MB</maxFileSize>
@@ -49,22 +47,23 @@
             <!-- 超出删除老文件 -->
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
-
-        <encoder>${Log-Pattern}</encoder>
+        <encoder>
+            <pattern>${Log-Pattern}</pattern>
+        </encoder>
     </appender>
 
-<!--    项目默认日志级别-->
-    <logger name="SysWarn" level="ERROR" />
-
-    <logger name="WarnSever" additivaty="false" level="INFO">
-        <appendef-ref ref="rollingFile_warn" />
+    <!-- 项目默认日志级别 -->
+    <logger name="SysWarn" level="INFO" >
+        <appender-ref ref="rollingFile" />
     </logger>
 
-<!--    日志输出级别-->
+    <logger name="WarnSever" additivity="false" level="INFO">
+        <appender-ref ref="rollingFile_warn" />
+    </logger>
+
+    <!-- 日志输出级别 -->
     <root level="INFO">
-        <appender-ref ref="console"/>
+        <appender-ref ref="console" />
         <appender-ref ref="rollingFile" />
     </root>
 </configuration>
-
-

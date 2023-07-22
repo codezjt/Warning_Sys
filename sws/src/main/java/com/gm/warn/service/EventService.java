@@ -229,13 +229,13 @@ public class EventService {
     @Action(description = "接受事件，存储事件，更新统计信息")
     @Transactional
     public void updateCacl(Event e){
-
+        long time = System.currentTimeMillis();
         addOrUpdate(e);
         System.out.println("执行事务中途----------------");
         caclService.updateCaclData(e.getCategory().getName());
         String WarringMsg = "[山河智能] -人员安全报警\n" + "尊敬的用户:您好，根据数据监控显示，桩工车间" + e.getRoad() + "有人员" + e.getCategory().getName() +
                 "进入车间，为了安全保障，请管理人员尽快去车间现场核实情况。点击链接查看详情: http://**********:9401" + e.getCover();
-        log.info("{}", WarringMsg);
+        log.info("时间：{}，警告信息：{}", time, WarringMsg);
 //        sendMsgWarring(WarringMsg);   //微信报警调用
     }
 
