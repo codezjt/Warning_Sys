@@ -5,6 +5,7 @@ import com.gm.warn.entity.AdminMenu;
 import com.gm.warn.entity.AdminRoleMenu;
 import com.gm.warn.entity.AdminUserRole;
 import com.gm.warn.entity.User;
+import log.Action;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,12 @@ public class AdminMenuService {
     @Autowired
     AdminRoleMenuService adminRoleMenuService;
 
+    @Action(description = "根据id查询所有菜单")
     public List<AdminMenu> getAllByParentId(int parentId) {
         return adminMenuDAO.findAllByParentId(parentId);
     }
 
+    @Action(description = "获取当前用户")
     public List<AdminMenu> getMenusByCurrentUser() {
         // Get current user in DB.
         String username = SecurityUtils.getSubject().getPrincipal().toString();
@@ -47,6 +50,7 @@ public class AdminMenuService {
         return menus;
     }
 
+    @Action(description = "根据角色id菜单")
     public List<AdminMenu> getMenusByRoleId(int rid) {
         List<Integer> menuIds = adminRoleMenuService.findAllByRid(rid)
                 .stream().map(AdminRoleMenu::getMid).collect(Collectors.toList());
@@ -56,11 +60,7 @@ public class AdminMenuService {
         return menus;
     }
 
-    /**
-     * Adjust the Structure of the menu.
-     *
-     * @param menus Menu items list without structure
-     */
+    @Action(description = "筛选账单")
     public void handleMenus(List<AdminMenu> menus) {
         menus.forEach(m -> {
             List<AdminMenu> children = getAllByParentId(m.getId());

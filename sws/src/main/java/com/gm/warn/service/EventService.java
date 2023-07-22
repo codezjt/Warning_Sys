@@ -12,6 +12,9 @@ import com.gm.warn.util.Sha256Utils;
 
 //import org.apache.http.impl.client.HttpClients;
 //import org.apache.http.impl.client.HttpClients;
+import log.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -44,7 +47,11 @@ public class EventService {
     @Autowired
     private CaclService caclService;
 
+    private final Logger log = LoggerFactory.getLogger("WarnSever");
 
+
+
+    @Action(description = "查询所有事件")
     public List<Event> list() {
         List<Event> events;
         String key = "eventlist";
@@ -62,6 +69,7 @@ public class EventService {
         }
         return events;
     }
+    @Action(description = "获取所有未报警事件")
     public List<Event> getAllEventIncludeNoWarn()
     {
         return eventDAO.getAllEventIncludeNoWarn();
@@ -76,6 +84,7 @@ public class EventService {
 //        return events;
 //    }
 
+    @Action(description = "新增/修改事件")
     public void addOrUpdate(Event event) {
         redisService.delete("eventlist");
         eventDAO.save(event);
@@ -87,6 +96,7 @@ public class EventService {
         redisService.delete("eventlist");
     }
 
+    @Action(description = "根据id事件")
     public void deleteById(int id) {
         redisService.delete("eventlist");
         eventDAO.deleteById(id);
@@ -98,20 +108,25 @@ public class EventService {
         redisService.delete("eventlist");
     }
 
+    @Action(description = "查询所有分类")
     public List<Event> listByCategory(int cid) {
         Category category = categoryService.get(cid);
         return eventDAO.findAllByCategory(category);
     }
 
+    @Action(description = "根据名称查询事件")
     public List<Event> Search(String keywords) {
         return eventDAO.findAllByNameLikeOrPartiesLike('%' + keywords + '%', '%' + keywords + '%');
     }
 
+    @Action(description = "获取线路")
     public List<String> getCameraRoad() {
+
 
         return eventDAO.findAllDistinctPress();
     }
 
+    @Action(description = "根据id线路")
     public Event getEventById(int id)
     {
         return eventDAO.getEventBYId(id);
@@ -121,34 +136,41 @@ public class EventService {
         return eventDAO.findAllByCidAndPressEquals(category, road);
     }
 
+    @Action(description = "根据路线获得事件")
     public List<Event> getImagesByRoad(String road) {
         return eventDAO.getImagesByRoad(road);
     }
 
+    @Action(description = "根据id获取新增事件")
     public List<Event> getAddEvents(int currentId){
         return eventDAO.getAddEventslargeCurrentId(currentId);
     }
 
+    @Action(description = "根据类别时间获取事件")
     public List<Event> getImagesBytimeandCategary(int category, String time) {
         return eventDAO.findAllByCidAndDateEquals(category, time);
     }
-
+    @Action(description = "根据时间获取事件")
     public List<Event> getImagesBytime(String time) {
         return eventDAO.getImagesByDate(time);
     }
 
+    @Action(description = "获取事件统计信息")
     public ArrayList getEveryCuClData(String firstday) {
         return eventDAO.getEveryCuClData(firstday);
     }
 
+    @Action(description = "获取已警告事件")
     public List<Event> getreadyWarring(String date, String road) {
         return eventDAO.getReadyWarring(date, road);
     }
 
+    @Action(description = "获取地点信息")
     public List<Map<String, Integer>> getLocationData() {
         return eventDAO.getLocationData();
     }
 
+    @Action(description = "获得统计数据")
     public ArrayList<Integer> getCountNum(){
         Calendar calendar;
 
@@ -159,7 +181,7 @@ public class EventService {
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         String firstday = format.format(calendar.getTime());
 
-        ArrayList<Integer> res = new ArrayList<Integer>();
+        ArrayList<Integer> res = new ArrayList<>();
         Integer totalWarning = eventDAO.getCountTotal(firstday);
         Integer peopleWarning = eventDAO.getCountPeople();
         Integer locationWarning = eventDAO.getCountLocation();
@@ -171,18 +193,22 @@ public class EventService {
         return res;
     }
 
+    @Action(description = "获取已警告事件")
     public List<Event> getReadyWarningEvents() {
         return eventDAO.getReadyWarningEvents();
     }
 
+    @Action(description = "获取未警告事件")
     public List<Event> getNoWarningEvent() {
         return eventDAO.getNoWarningEvent();
     }
 
+    @Action(description = "修改事件为警告")
     public void updateIsWarning(String state, int id){
         eventDAO.updataIsWarning(state, id);
     }
 
+    @Action(description = "获取月警告数据")
     public List<Map<String, Integer>> getWeekCaculate() {
         Calendar calendar;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -200,13 +226,20 @@ public class EventService {
         return eventDAO.getWeekCaculate(daytime);
     }
 
+    @Action(description = "接受事件，存储事件，更新统计信息")
     @Transactional
     public void updateCacl(Event e){
+
         addOrUpdate(e);
         System.out.println("执行事务中途----------------");
         caclService.updateCaclData(e.getCategory().getName());
+        String WarringMsg = "[山河智能] -人员安全报警\n" + "尊敬的用户:您好，根据数据监控显示，桩工车间" + e.getRoad() + "有人员" + e.getCategory().getName() +
+                "进入车间，为了安全保障，请管理人员尽快去车间现场核实情况。点击链接查看详情: http://**********:9401" + e.getCover();
+        log.info("{}", WarringMsg);
+//        sendMsgWarring(WarringMsg);   //微信报警调用
     }
 
+    @Action(description = "获取摄像头数据")
     public List<Map<String, Integer>> getEquipmentData() {
         return eventDAO.getEquipmentData();
     }
@@ -262,6 +295,7 @@ public class EventService {
 //        EventService.request("", jsonArray);
 //    }
 
+    @Action(description = "发送警告信息")
     public void sendMsgWarring(String msg)
     {
         JSONObject object= new JSONObject(true);
@@ -269,21 +303,20 @@ public class EventService {
         object.put("sendCode", "014926");
         object.put("message", msg);
         object.put("showTimes", 1);
-        object.put("secretKey", "TD4pZRg3vT7w5PULGcaZCq58dojLNOL8");
-        object.put("secretId", "6uyitrmCG0z8CYljORgZDR9PIhN4FDda");
-        String shaSign = Sha256Utils.getSign(object.toJSONString(),"TD4pZRg3vT7w5PULGcaZCq58dojLNOL8","6uyitrmCG0z8CYljORgZDR9PIhN4FDda");
+        object.put("secretKey", "TD4pZRg3vT7w5PU*********");
+        object.put("secretId", "6uyitrmCG0z8CYljO********");
+        String shaSign = Sha256Utils.getSign(object.toJSONString(),"TD4pZRg3vT7w5PULG*******","6uyitrmCG0z8CYljORgZ***********");
         object.put("sign",shaSign);
         System.out.println(object);
-        JSONObject body = doPost("http://forklift.sunward.com.cn/forklift/message/push", restTemplate, object);
+        JSONObject body = doPost("http://****/****", restTemplate, object);
     }
 
     /**
      * @description : 发送post请求
-     * @author:mingF
-     * @date :2022/5/14 16:51
      * @Param: [url :请求地址,restTemplatelist :请求方法,map :请求数据]
      * @return: [com.alibaba.fastjson.JSONObject]
      **/
+    @Action(description = "发送微信预警请求")
     public static JSONObject doPost(String url, RestTemplate restTemplate, Map<String,Object> map) {
         try {
             //String url  = HttpUtil.doPost(ConstantsEnum.DISOUE_WEB_IP+ConstantsEnum.TYBigDataChinaMainMap,paramStr);
